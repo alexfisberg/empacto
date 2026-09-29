@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EmPacto — Cursos de Negócios e Empreendedorismo Social</title>
+<meta name="description" content="Trilha de formação em negócios sociais: cursos, clube do livro e grupo de estudos, fundamentados em Yunus, Drayton/Ashoka, Bornstein e B Lab/Sistema B.">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --bg-alt:#F5F6FA;
+    --ink:#14183A;
+    --ink-soft:#4A5178;
+    --navy:#1E2761;
+    --navy-deep:#0F1330;
+    --paper-on-navy:#E7EAF7;
+    --gold:#B8863A;
+    --gold-bright:#D99A2B;
+    --line:#E1E4EF;
+    --line-on-navy:#33396B;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0F1330;
+      --bg-alt:#151A3B;
+      --ink:#EDEFFA;
+      --ink-soft:#AEB4DA;
+      --line:#2A3163;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0F1330;
+    --bg-alt:#151A3B;
+    --ink:#EDEFFA;
+    --ink-soft:#AEB4DA;
+    --line:#2A3163;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%; scroll-padding-top: calc(76px + env(safe-area-inset-top,0px));}
+  @media (prefers-reduced-motion: no-preference){ html{ scroll-behavior:smooth; } }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  h1,h2,h3{
+    font-family:'Source Serif 4',Georgia,'Times New Roman',serif;
+    font-weight:600;
+    line-height:1.15;
+    margin:0;
+    color:var(--ink);
+  }
+  p{margin:0;}
+  a{color:inherit;}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 28px;}
+  @media (max-width:640px){ .wrap{padding:0 20px;} }
+
+  /* ---------- NAV ---------- */
+  header.nav{
+    position:sticky; top:0; z-index:40;
+    background:color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+    padding-top:env(safe-area-inset-top,0px);
+  }
+  .nav-inner{
+    max-width:1080px; margin:0 auto; padding:16px 28px;
+    display:flex; align-items:center; justify-content:space-between; gap:24px;
+  }
+  @media (max-width:640px){ .nav-inner{padding:14px 20px;} }
+  .wordmark{
+    font-family:'Source Serif 4',Georgia,serif;
+    font-weight:600; font-size:19px; letter-spacing:0.01em;
+    white-space:nowrap;
+  }
+  .wordmark span{color:var(--gold);}
+  nav.links{display:flex; gap:28px; font-size:14.5px;}
+  nav.links a{text-decoration:none; color:var(--ink-soft); border-bottom:1px solid transparent; padding-bottom:2px; margin-right:28px;}
+  nav.links a:last-child{margin-right:0;}
+  nav.links a:hover{color:var(--ink); border-bottom-color:var(--gold);}
+  @media (max-width:760px){ nav.links{display:none;} }
+  .btn{
+    display:inline-block; font-family:'Inter',sans-serif; font-weight:600; font-size:14.5px;
+    padding:11px 22px; border-radius:3px; text-decoration:none; border:1px solid transparent;
+    cursor:pointer; white-space:nowrap;
+  }
+  .btn-primary{background:var(--navy); color:#fff;}
+  .btn-primary:hover{background:var(--navy-deep);}
+  .btn-gold{background:var(--gold-bright); color:#1A1200;}
+  .btn-gold:hover{background:#c78b26;}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:76px 0 64px;}
+  .hero .kicker{
+    font-size:14px; color:var(--gold); font-weight:600; margin-bottom:18px; letter-spacing:0.02em;
+  }
+  .hero h1{font-size:clamp(32px,4.6vw,50px); max-width:18ch;}
+  .hero .sub{
+    font-size:18.5px; color:var(--ink-soft); max-width:56ch; margin-top:20px; line-height:1.55;
+  }
+  .hero .cta-row{margin-top:36px; display:flex; gap:16px; flex-wrap:wrap; align-items:center;}
+  .hero .authors{
+    margin-top:52px; padding-top:22px; border-top:1px solid var(--line);
+    font-size:14px; color:var(--ink-soft);
+  }
+  .hero .authors b{color:var(--ink); font-weight:600;}
+
+  /* ---------- SECTION HEADS ---------- */
+  section{padding:64px 0;}
+  .section-head{max-width:62ch; margin-bottom:40px;}
+  .section-head .label{font-size:13px; color:var(--gold); font-weight:600; margin-bottom:10px;}
+  .section-head h2{font-size:clamp(25px,3vw,32px);}
+  .section-head .lede{margin-top:14px; font-size:16px; color:var(--ink-soft); line-height:1.55;}
+
+  /* ---------- COURSES ---------- */
+  .course-group-label{
+    font-size:13px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:0.05em;
+    padding:26px 0 14px; border-top:1px solid var(--line);
+  }
+  .course-group-label:first-child{border-top:none; padding-top:0;}
+  .course-row{
+    display:grid; grid-template-columns:44px 1fr auto; gap:22px;
+    padding:22px 0; border-top:1px solid var(--line);
+    align-items:start;
+  }
+  @media (max-width:640px){
+    .course-row{grid-template-columns:36px 1fr; grid-template-rows:auto auto;}
+    .course-row .c-tag{grid-column:1 / -1; margin-top:10px; margin-left:56px;}
+  }
+  .course-row .c-num{
+    font-family:'Source Serif 4',serif; font-size:19px; color:var(--gold); font-weight:600;
+  }
+  .course-row .c-name{font-weight:600; font-size:16.5px; margin-bottom:6px;}
+  .course-row .c-desc{font-size:14.5px; color:var(--ink-soft); line-height:1.55; max-width:56ch;}
+  .course-row .c-tag{
+    font-size:12px; font-weight:600; color:var(--ink-soft); border:1px solid var(--line);
+    border-radius:3px; padding:6px 12px; white-space:nowrap; height:fit-content;
+  }
+
+  /* ---------- PILLARS (navy band) ---------- */
+  .band-navy{background:var(--navy); color:var(--paper-on-navy);}
+  .positioning{padding:64px 0;}
+  .positioning h2{color:#fff; font-size:clamp(25px,3.2vw,32px); max-width:22ch;}
+  .positioning .lede{max-width:60ch; margin-top:16px; font-size:16px; color:#C7CEE6; line-height:1.6;}
+  .pillars{
+    margin-top:44px;
+    display:grid; grid-template-columns:repeat(4,1fr); gap:0;
+    border-top:1px solid var(--line-on-navy);
+  }
+  @media (max-width:760px){ .pillars{grid-template-columns:1fr 1fr;} }
+  @media (max-width:480px){ .pillars{grid-template-columns:1fr;} }
+  .pillar{ padding:24px 22px 24px 0; border-right:1px solid var(--line-on-navy); }
+  .pillars .pillar:last-child{border-right:none;}
+  @media (max-width:760px){
+    .pillar:nth-child(2n){border-right:none;}
+    .pillar{border-bottom:1px solid var(--line-on-navy);}
+  }
+  .pillar dt{font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold-bright); font-weight:600; margin:0 0 8px;}
+  .pillar dd{margin:0;}
+  .pillar .name{font-family:'Source Serif 4',serif; font-size:17px; font-weight:600; color:#fff;}
+  .pillar .role{font-size:13px; color:#9AA6C9; margin-top:2px;}
+
+  /* ---------- FORMATO ---------- */
+  .format-list{border-top:1px solid var(--line);}
+  .format-list li{
+    list-style:none; padding:18px 0; border-bottom:1px solid var(--line);
+    display:grid; grid-template-columns:200px 1fr; gap:20px; font-size:15px;
+  }
+  @media (max-width:640px){ .format-list li{grid-template-columns:1fr; gap:4px;} }
+  .format-list .f-label{font-weight:600; color:var(--ink);}
+  .format-list .f-desc{color:var(--ink-soft); line-height:1.5;}
+
+  /* ---------- INSCRIÇÃO ---------- */
+  .enroll{background:var(--navy); color:var(--paper-on-navy);}
+  .enroll-grid{display:grid; grid-template-columns:1fr 1fr; gap:56px;}
+  @media (max-width:760px){ .enroll-grid{grid-template-columns:1fr; gap:40px;} }
+  .enroll h2{color:#fff; font-size:clamp(25px,3.2vw,32px); max-width:18ch;}
+  .enroll .lede{margin-top:14px; font-size:16px; color:#C7CEE6; max-width:44ch; line-height:1.6;}
+  .enroll .direct{margin-top:30px; font-size:14.5px; color:#C7CEE6;}
+  .enroll .direct a{color:#fff; text-decoration:underline; text-underline-offset:3px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:13px; color:#9AA6C9; margin-bottom:6px;}
+  .field select, .field input, .field textarea{
+    width:100%; background:var(--navy-deep); border:1px solid var(--line-on-navy); color:#fff;
+    padding:12px 14px; font-family:'Inter',sans-serif; font-size:15px; border-radius:3px;
+  }
+  .field select:focus, .field input:focus, .field textarea:focus{outline:2px solid var(--gold-bright); outline-offset:1px;}
+  .field textarea{resize:vertical; min-height:80px;}
+
+  /* ---------- FOOTER ---------- */
+  footer{padding:40px 0; border-top:1px solid var(--line);}
+  .footer-row{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;}
+  footer .wordmark{font-size:16px;}
+  footer .meta{font-size:13.5px; color:var(--ink-soft);}
+
+  a:focus-visible, button:focus-visible{ outline:2px solid var(--gold-bright); outline-offset:2px; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="wordmark">Em<span>Pacto</span></div>
+    <nav class="links">
+      <a href="#cursos">Cursos</a>
+      <a href="#formato">Como funciona</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <a class="btn btn-primary" href="#contato">Falar com a gente</a>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero wrap">
+    <div class="kicker">EmPacto · Formação em negócios sociais</div>
+    <h1>Uma trilha de formação para quem quer construir negócios que mudam alguma coisa</h1>
+    <p class="sub">Sete formatos — cursos, clube do livro e grupo de estudos — fundamentados em quatro referências concretas do campo: Muhammad Yunus, Bill Drayton/Ashoka, David Bornstein e o B Lab/Sistema B. Sem ESG, sem Capitalismo Consciente: teoria e prática de negócios sociais.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#cursos">Ver os 7 formatos</a>
+      <a class="btn" href="#contato" style="color:var(--ink); border:1px solid var(--line);">Tirar uma dúvida</a>
+    </div>
+    <div class="authors">
+      Bases teóricas: <b>Muhammad Yunus</b> (Grameen Bank) · <b>Bill Drayton</b> (Ashoka) · <b>David Bornstein</b> · <b>B Lab / Sistema B</b>
+    </div>
+  </section>
+
+  <!-- PILARES -->
+  <div class="band-navy">
+    <section class="positioning wrap">
+      <h2>Um núcleo teórico, aplicado em sete formatos diferentes</h2>
+      <p class="lede">Cada curso, clube ou grupo de estudos da EmPacto se apoia no mesmo repertório — o que muda é a profundidade e a aplicação prática de cada tema.</p>
+      <dl class="pillars">
+        <div class="pillar">
+          <dt>A definição</dt>
+          <dd><div class="name">Muhammad Yunus</div><div class="role">Grameen Bank</div></dd>
+        </div>
+        <div class="pillar">
+          <dt>A pessoa</dt>
+          <dd><div class="name">Bill Drayton</div><div class="role">Ashoka</div></dd>
+        </div>
+        <div class="pillar">
+          <dt>O método</dt>
+          <dd><div class="name">David Bornstein</div><div class="role">Estudo de caso</div></dd>
+        </div>
+        <div class="pillar">
+          <dt>A régua</dt>
+          <dd><div class="name">B Lab / Sistema B</div><div class="role">B Impact Assessment</div></dd>
+        </div>
+      </dl>
+    </section>
+  </div>
+
+  <!-- CURSOS -->
+  <section class="wrap" id="cursos">
+    <div class="section-head">
+      <div class="label">Formação EmPacto</div>
+      <h2>Sete formatos, dois ritmos</h2>
+      <p class="lede">Cinco cursos com início, meio e fim — e dois formatos contínuos, para quem quer se manter perto do tema entre uma turma e outra.</p>
+    </div>
+
+    <div class="course-group-label">Cursos estruturados</div>
+    <div class="course-row">
+      <div class="c-num">01</div>
+      <div>
+        <div class="c-name">Negócios Sociais 101</div>
+        <div class="c-desc">A base do campo: o que é (e o que não é) um negócio social, a partir de Yunus, Drayton/Ashoka, Bornstein e B Lab/Sistema B.</div>
+      </div>
+      <div class="c-tag">Curso introdutório</div>
+    </div>
+    <div class="course-row">
+      <div class="c-num">02</div>
+      <div>
+        <div class="c-name">Empreendedorismo Social 101</div>
+        <div class="c-desc">O perfil e a prática do empreendedor social — como identificar, validar e estruturar uma ideia com propósito, a partir do modelo Ashoka.</div>
+      </div>
+      <div class="c-tag">Curso introdutório</div>
+    </div>
+    <div class="course-row">
+      <div class="c-num">03</div>
+      <div>
+        <div class="c-name">Teoria de Mudança e Marco Lógico</div>
+        <div class="c-desc">Ferramentas de planejamento e monitoramento: como construir uma Teoria de Mudança e um Marco Lógico que orientem decisões, não só relatórios.</div>
+      </div>
+      <div class="c-tag">Curso prático</div>
+    </div>
+    <div class="course-row">
+      <div class="c-num">04</div>
+      <div>
+        <div class="c-name">O Essencial da Captação de Recursos</div>
+        <div class="c-desc">Fundraising para negócios e organizações de impacto: doadores, editais, investidores de impacto — o essencial para começar a captar.</div>
+      </div>
+      <div class="c-tag">Curso prático</div>
+    </div>
+    <div class="course-row">
+      <div class="c-num">05</div>
+      <div>
+        <div class="c-name">Modelos de Negócio para Mudar o Mundo</div>
+        <div class="c-desc">Business Model Canvas aplicado a negócios híbridos e de impacto: modelos de receita, subsídio cruzado e sustentabilidade financeira com propósito.</div>
+      </div>
+      <div class="c-tag">Curso prático</div>
+    </div>
+
+    <div class="course-group-label">Comunidade contínua</div>
+    <div class="course-row">
+      <div class="c-num">06</div>
+      <div>
+        <div class="c-name">Clube do Livro de Impacto</div>
+        <div class="c-desc">Encontros recorrentes de leitura e discussão de obras-referência do campo — Yunus, Bornstein, Prahalad e outros autores centrais.</div>
+      </div>
+      <div class="c-tag">Encontro mensal</div>
+    </div>
+    <div class="course-row">
+      <div class="c-num">07</div>
+      <div>
+        <div class="c-name">Grupo de Estudos em Negócios Sociais</div>
+        <div class="c-desc">Espaço contínuo de aprofundamento coletivo, com estudos de caso, trocas entre pares e atualização sobre o campo.</div>
+      </div>
+      <div class="c-tag">Encontro quinzenal</div>
+    </div>
+  </section>
+
+  <!-- FORMATO -->
+  <section class="wrap" id="formato">
+    <div class="section-head">
+      <div class="label">Como funciona</div>
+      <h2>O que esperar de cada formato</h2>
+    </div>
+    <ul class="format-list">
+      <li><span class="f-label">Cursos estruturados</span><span class="f-desc">Turmas fechadas, com início e fim definidos, leitura prévia, estudo de caso e um exercício aplicado por encontro.</span></li>
+      <li><span class="f-label">Clube do livro e grupo de estudos</span><span class="f-desc">Formato aberto e recorrente, sem pré-requisito — entra quem quiser, no encontro que quiser.</span></li>
+      <li><span class="f-label">Modalidade</span><span class="f-desc">Online ao vivo, com possibilidade de encontros presenciais em São Paulo para turmas fechadas.</span></li>
+      <li><span class="f-label">Para quem</span><span class="f-desc">Empreendedores, investidores, equipes de organizações sociais e qualquer pessoa curiosa sobre o campo.</span></li>
+    </ul>
+  </section>
+
+  <!-- CONTATO -->
+  <div class="enroll" id="contato">
+    <section class="wrap enroll-grid" style="padding:64px 0;">
+      <div>
+        <h2>Quer saber quando abrem as próximas turmas?</h2>
+        <p class="lede">Escolha o curso de interesse e deixe seu contato — a mensagem abre direto no WhatsApp da EmPacto, com tudo já preenchido.</p>
+        <div class="direct">
+          Prefere e-mail? Escreva para <a href="mailto:contato@empacto.social?subject=Cursos%20EmPacto">contato@empacto.social</a>
+        </div>
+      </div>
+      <form id="enroll-form">
+        <div class="field">
+          <label for="f-course">Curso de interesse</label>
+          <select id="f-course" name="course">
+            <option value="Negócios Sociais 101">Negócios Sociais 101</option>
+            <option value="Empreendedorismo Social 101">Empreendedorismo Social 101</option>
+            <option value="Teoria de Mudança e Marco Lógico">Teoria de Mudança e Marco Lógico</option>
+            <option value="O Essencial da Captação de Recursos">O Essencial da Captação de Recursos</option>
+            <option value="Modelos de Negócio para Mudar o Mundo">Modelos de Negócio para Mudar o Mundo</option>
+            <option value="Clube do Livro de Impacto">Clube do Livro de Impacto</option>
+            <option value="Grupo de Estudos em Negócios Sociais">Grupo de Estudos em Negócios Sociais</option>
+            <option value="Ainda não sei / quero indicação">Ainda não sei / quero indicação</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-name">Nome</label>
+          <input id="f-name" name="name" type="text" required>
+        </div>
+        <div class="field">
+          <label for="f-email">E-mail</label>
+          <input id="f-email" name="email" type="email" required>
+        </div>
+        <div class="field">
+          <label for="f-msg">Mensagem (opcional)</label>
+          <textarea id="f-msg" name="msg" placeholder="Quero saber quando abre a próxima turma."></textarea>
+        </div>
+        <button type="submit" class="btn btn-gold">Enviar pelo WhatsApp</button>
+      </form>
+    </section>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap footer-row">
+    <div class="wordmark">Em<span style="color:#B8863A;">Pacto</span></div>
+    <div class="meta">São Paulo, Brasil · Consultoria e formação em impacto social</div>
+  </div>
+</footer>
+
+<script>
+  // ---- WhatsApp-powered contact form ----
+  var WHATSAPP_NUMBER = "5511900000000"; // TODO: substituir pelo número real da EmPacto
+  var form = document.getElementById('enroll-form');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var course = document.getElementById('f-course').value;
+    var name = document.getElementById('f-name').value.trim();
+    var email = document.getElementById('f-email').value.trim();
+    var msg = document.getElementById('f-msg').value.trim() || "Quero saber quando abre a próxima turma.";
+    var text = "Olá! Meu nome é " + name + " (" + email + "). Tenho interesse em: " + course + ". " + msg + " — vim pelo site da EmPacto.";
+    var url = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(text);
+    window.open(url, "_blank");
+  });
+</script>
+
+</body>
+</html>
