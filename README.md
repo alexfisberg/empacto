@@ -47,3 +47,22 @@ window.EMPACTO_FORM = {
 ## Idiomas
 
 As três versões têm o mesmo conteúdo, fotos e funcionalidades (Por onde começar, recomendações, formulários e WhatsApp), só traduzidos. O seletor PT / EN / ES no topo e no rodapé leva de uma para a outra. Ao alterar um texto em português, lembre de ajustar também `en/index.html` e `es/index.html`.
+
+## E-mail com a identidade visual (EmailJS)
+
+O site já monta o e-mail da equipe com a cara da EmPacto. Para ativar:
+
+1. Crie uma conta grátis em https://www.emailjs.com (até 200 envios/mês).
+2. **Email Services → Add New Service → Gmail** e conecte o e-mail que vai enviar. Anote o **Service ID**.
+3. **Email Templates → Create New Template**:
+   - Subject: `{{subject}}`
+   - To Email: `alex@mochilasocial.com` (depois, `oi@empacto.social`) · Bcc/Cc: `mbm.manuela@gmail.com`
+   - Reply To: `{{reply_to}}` · From Name: `Site EmPacto`
+   - Conteúdo: clique em **Edit Content → Code editor** e cole só `{{{html}}}` (com três chaves).
+   - Salve e anote o **Template ID**.
+4. **Account → General**: copie a **Public Key**.
+5. No `index.html`, `en/index.html` e `es/index.html`, preencha:
+   `emailjs: { serviceId: 'service_xxx', templateId: 'template_xxx', publicKey: 'xxxx' }`
+6. Em **Account → Security**, restrinja o envio ao domínio `empacto.social`.
+
+Com os três campos vazios, o site continua enviando pelo FormSubmit (tabela simples, mas organizada).

@@ -3366,6 +3366,22 @@ body { font-synthesis-weight: none; }
 .cf-note .sel { user-select: all; }
 .result .result-title { padding-right: 120px; }
 @media (max-width: 559px) { .result .result-title { padding-right: 96px; } }
+
+/* Serviços de interesse no fim do diagnóstico */
+.rf-services { border: 0; padding: 0; margin: 0; min-width: 0; display: grid; gap: 8px; }
+.rf-services legend { padding: 0; margin-bottom: 4px; font: 600 0.78rem/1.2 var(--sans); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); }
+.rf-hint { color: var(--ink-2); font-size: 0.9rem; margin: 0; }
+.rf-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.rf-chip { position: relative; display: inline-flex; align-items: center; gap: 9px; padding: 8px 12px; border: 1.5px solid var(--line-strong); border-radius: 0; background: var(--paper); color: var(--ink); font-size: 0.9rem; line-height: 1.25; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: border-color 0.15s, background-color 0.15s; }
+.rf-chip input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.rf-chip .box { position: relative; flex: none; width: 15px; height: 15px; border: 1.5px solid var(--line-strong); background: var(--paper); transition: background-color 0.15s, border-color 0.15s; }
+.rf-chip .box::after { content: ""; position: absolute; left: 4px; top: 0.5px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); opacity: 0; }
+.rf-chip small { color: var(--clay); font: 600 0.66rem/1 var(--sans); letter-spacing: 0.1em; text-transform: uppercase; }
+@media (hover: hover) { .rf-chip:hover { border-color: var(--ink); } }
+.rf-chip:has(input:checked) { border-color: var(--clay); background: var(--clay-tint); }
+.rf-chip:has(input:checked) .box { background: var(--clay); border-color: var(--clay); }
+.rf-chip:has(input:checked) .box::after { opacity: 1; }
+.rf-chip:has(input:focus-visible) { outline: 2.5px solid var(--clay); outline-offset: 2px; }
 </style>
 <script>
 /* ===== Envio dos formulários =====
@@ -3379,15 +3395,103 @@ window.EMPACTO_FORM = {
   endpoint: 'https://formsubmit.co/ajax/alex@mochilasocial.com',
   cc: 'mbm.manuela@gmail.com',
   email: 'alex@mochilasocial.com',
+  // E-mail com a identidade visual (opcional): preencha com os dados da conta EmailJS.
+  // Com os três preenchidos, o site passa a enviar pelo EmailJS; vazios, continua no FormSubmit.
+  emailjs: { serviceId: 'service_q8ioiho', templateId: 'template_a45jixp', publicKey: 'o8mpUO2W0nL7tAzSi' },
 };
+
+/* Monta o e-mail que a equipe recebe, com a identidade da EmPacto (tabelas e estilos inline para funcionar no Gmail/Outlook). */
+window.empactoEmailHTML = (f, subject) => {
+  const e = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const C = { paper: '#faf6ee', sand: '#f1e9da', ink: '#1c2118', ink2: '#555b4e', forest: '#22311f', clay: '#b5522a', ochre: '#d9a441', line: '#e2d8c5' };
+  const serif = "Radley, Georgia, 'Times New Roman', serif";
+  const sans = "Inter, 'Helvetica Neue', Arial, sans-serif";
+  const eyebrow = (t) => `<p style="margin:0 0 10px;font:600 11px/1.2 ${sans};letter-spacing:.14em;text-transform:uppercase;color:${C.clay}">${e(t)}</p>`;
+  const d = f.diag;
+  const first = (f.nome || '').split(' ')[0];
+  const when = new Date().toLocaleString('pt-BR', { dateStyle: 'long', timeStyle: 'short', timeZone: 'America/Sao_Paulo' });
+  const rows = [];
+  rows.push(`<tr><td style="padding:28px 32px 6px">
+      ${eyebrow(d ? 'Novo diagnóstico · Por onde começar' : 'Nova mensagem · ' + (f.origem || 'Site'))}
+      <h1 style="margin:0;font:400 30px/1.15 ${serif};color:${C.ink}">${e(f.nome)}</h1>
+      <p style="margin:8px 0 0;font:400 15px/1.5 ${sans};color:${C.ink2}"><a href="mailto:${e(f.email)}" style="color:${C.clay};text-decoration:none">${e(f.email)}</a>${f.telefone ? ' &nbsp;·&nbsp; ' + e(f.telefone) : ''}</p>
+    </td></tr>`);
+  if (f.mensagem) rows.push(`<tr><td style="padding:18px 32px 6px">
+      <div style="border-left:3px solid ${C.ochre};background:${C.sand};padding:16px 18px;font:400 15px/1.6 ${sans};color:${C.ink};white-space:pre-wrap">${e(f.mensagem)}</div>
+    </td></tr>`);
+  if (d) {
+    const cards = (d.caminhos || []).map((c, i) => `<td valign="top" width="50%" style="padding:${i ? '0 0 0 6px' : '0 6px 0 0'}">
+        <div style="background:${C.forest};padding:18px 18px 20px;height:100%">
+          <p style="margin:0 0 6px;font:600 10px/1.2 ${sans};letter-spacing:.14em;text-transform:uppercase;color:${C.ochre}">Caminho ${i + 1}</p>
+          <p style="margin:0 0 8px;font:400 19px/1.2 ${serif};color:#fff">${e(c.titulo)}</p>
+          <p style="margin:0;font:400 13px/1.5 ${sans};color:#d8dccf">${e(c.porque)}</p>
+        </div></td>`).join('');
+    rows.push(`<tr><td style="padding:26px 32px 6px">${eyebrow('Recomendação do diagnóstico')}
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse"><tr>${cards}</tr></table></td></tr>`);
+    const chips = (d.servicos || []).map((s) => `<span style="display:inline-block;margin:0 6px 6px 0;padding:6px 10px;border:1.5px solid ${C.clay};background:#f6e6dc;font:500 13px/1.2 ${sans};color:${C.ink}">${e(s)}</span>`).join('');
+    rows.push(`<tr><td style="padding:22px 32px 6px">${eyebrow('Serviços que a pessoa marcou')}
+        ${chips || `<p style="margin:0;font:400 14px/1.5 ${sans};color:${C.ink2}">Nenhum serviço marcado.</p>`}</td></tr>`);
+    const ans = (d.respostas || []).map(([k, v]) => `<tr>
+        <td valign="top" width="110" style="padding:10px 12px 10px 0;border-top:1px solid ${C.line};font:600 11px/1.5 ${sans};letter-spacing:.1em;text-transform:uppercase;color:${C.ink2}">${e(k)}</td>
+        <td valign="top" style="padding:10px 0;border-top:1px solid ${C.line};font:400 15px/1.5 ${sans};color:${C.ink}">${e(v)}</td></tr>`).join('');
+    rows.push(`<tr><td style="padding:22px 32px 6px">${eyebrow('Respostas')}
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">${ans}</table></td></tr>`);
+  }
+  rows.push(`<tr><td style="padding:26px 32px 30px">
+      <a href="mailto:${e(f.email)}?subject=${encodeURIComponent('EmPacto — ' + (d ? 'seu diagnóstico' : 'sua mensagem'))}" style="display:inline-block;background:${C.forest};color:#fff;padding:13px 20px;font:600 14px/1 ${sans};text-decoration:none">Responder ${e(first)} <span style="color:${C.ochre}">→</span></a>
+    </td></tr>`);
+  const meta = [d && d.codigo ? 'Código ' + d.codigo : '', f.origem, f.idioma ? 'Site em ' + f.idioma.toUpperCase() : '', when].filter(Boolean).map(e).join(' &nbsp;·&nbsp; ');
+  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${e(subject)}</title></head>
+<body style="margin:0;padding:0;background:${C.sand}">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.sand}"><tr><td align="center" style="padding:28px 12px">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;background:${C.paper};border-collapse:collapse">
+    <tr><td style="background:${C.forest};padding:20px 32px">
+      <span style="font:400 24px/1 ${serif};color:#fff">Em<i style="color:${C.ochre}">Pacto</i></span>
+      <span style="float:right;font:600 10px/24px ${sans};letter-spacing:.14em;text-transform:uppercase;color:#c9cfbf">Recebido pelo site</span>
+    </td></tr>
+    ${rows.join('\n    ')}
+  </table>
+  <p style="max-width:640px;margin:14px auto 0;font:400 12px/1.5 ${sans};color:${C.ink2}">${meta}</p>
+</td></tr></table></body></html>`;
+};
+
 window.empactoSend = async (fields, subject) => {
   const cfg = window.EMPACTO_FORM;
+  const f = Object.assign({ idioma: document.documentElement.lang || 'pt-BR' }, fields);
+  const ej = cfg.emailjs || {};
+  if (ej.serviceId && ej.templateId && ej.publicKey) {
+    const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service_id: ej.serviceId,
+        template_id: ej.templateId,
+        user_id: ej.publicKey,
+        template_params: { subject, reply_to: f.email, from_name: f.nome, html: window.empactoEmailHTML(f, subject) },
+      }),
+    }).catch(() => null);
+    if (res && res.ok) return true;
+    // Se o EmailJS falhar (limite do mês, conta desconectada...), cai no FormSubmit para a mensagem não se perder.
+  }
+  // FormSubmit: uma linha por informação, com nomes legíveis e na ordem em que a equipe lê.
+  const rows = { 'Nome': f.nome, 'E-mail': f.email };
+  if (f.telefone) rows['Telefone'] = f.telefone;
+  if (f.mensagem) rows['Mensagem'] = f.mensagem;
+  const d = f.diag;
+  if (d) {
+    (d.caminhos || []).forEach((c, i) => { rows[`Caminho recomendado ${i + 1}`] = c.titulo; });
+    rows['Serviços que a pessoa marcou'] = (d.servicos || []).join(' · ') || '—';
+    (d.respostas || []).forEach(([k, v]) => { rows[k] = v; });
+    rows['Código do diagnóstico'] = d.codigo;
+  }
+  rows['Origem'] = f.origem;
+  rows['Idioma do site'] = f.idioma;
   const payload = Object.assign({
     _subject: subject,
     _template: 'table',
     _captcha: 'false',
-    _replyto: fields.email,
-  }, cfg.cc ? { _cc: cfg.cc } : {}, fields);
+    _replyto: f.email,
+  }, cfg.cc ? { _cc: cfg.cc } : {}, rows);
   const res = await fetch(cfg.endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -3563,8 +3667,8 @@ window.empactoSubmit = async (form, button, note, fields, subject) => {
           <div class="case-gallery" data-gallery aria-roledescription="carrusel" aria-label="Fotos: L&#x27;Occitane"><div class="cg-track" tabindex="0"><img class="cg-slide" src="../img/loccitane-1.jpg" alt="Vecino y líder comunitario con camiseta de Periferia Sustentável explica el proyecto a voluntarios de L&#x27;Occitane en una azotea en la periferia de São Paulo" width="1600" height="1067" loading="lazy"><img class="cg-slide" src="../img/loccitane-2.jpg" alt="Líder de una cooperativa de reciclaje, de espaldas con la camiseta &#x27;Para muitos, lixo. Para nós, uma oportunidade!&#x27; (Para muchos, basura. ¡Para nosotros, una oportunidad!), conversa con voluntarios" width="1600" height="1067" loading="lazy"><img class="cg-slide" src="../img/loccitane-3.jpg" alt="Voluntarios observan a recicladoras separando materiales en la banda de clasificación de una cooperativa de reciclaje" width="1600" height="1067" loading="lazy"><img class="cg-slide" src="../img/loccitane-4.jpg" alt="Una voluntaria señala la tabla de agudeza visual durante una prueba de visión con un niño, que se cubre un ojo" width="1600" height="1067" loading="lazy"><img class="cg-slide" src="../img/loccitane-5.jpg" alt="Grupo de voluntarios sonrientes, con los brazos abiertos, frente al Auditório Isaías Dias" width="1600" height="1067" loading="lazy"></div><div class="cg-nav"><button type="button" class="cg-btn" data-dir="-1" aria-label="Foto anterior"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="cg-dots" aria-hidden="true"></div><button type="button" class="cg-btn" data-dir="1" aria-label="Foto siguiente"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M7.5 4.5 13 10l-5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div>
           <div class="case-top"><span>Voluntariado corporativo</span><span>2023–2025</span></div>
           <div><h3>Grupo L'Occitane</h3><p class="case-title">Programa de voluntariado</p></div>
-          <dl class="stats"><div class="stat"><dt>voluntarios</dt><dd>503</dd></div><div class="stat"><dt>actividades</dt><dd>23</dd></div><div class="stat"><dt>organizaciones apoyadas</dt><dd>19</dd></div></dl>
-          <p>EmPacto actúa como curadora, gestora y productora de toda la estrategia de voluntariado de la empresa, que culmina en una serie de eventos e inversiones durante la Semana de Voluntariado de L'Occitane, con la participación de cientos de colaboradores y decenas de organizaciones sociales.</p>
+          <dl class="stats"><div class="stat"><dt>voluntarios</dt><dd>503</dd></div><div class="stat"><dt>actividades</dt><dd>23</dd></div><div class="stat"><dt>organizaciones apoyadas</dt><dd>19</dd></div><div class="stat"><dt>años de alianza</dt><dd>3</dd></div></dl>
+          <p>EmPacto actuó durante 3 años consecutivos como curadora, gestora y productora de toda la estrategia de voluntariado de la empresa, que culminó en una serie de eventos e inversiones durante la Semana de Voluntariado de L'Occitane, con la participación de cientos de colaboradores y decenas de organizaciones sociales.</p>
           <div class="tags"><span class="tag">Voluntariado</span><span class="tag">Curaduría de Organizaciones Sociales</span><span class="tag">Gestión de Proyectos</span><span class="tag">Inversión Social</span></div>
         </article>
         <article class="case is-dark reveal" id="case-anavilhanas" style="--rd:0.08s">
@@ -3588,16 +3692,17 @@ window.empactoSubmit = async (form, button, note, fields, subject) => {
           <div class="case-gallery" data-gallery aria-roledescription="carrusel" aria-label="Fotos: Fundo Pranay"><div class="cg-track" tabindex="0"><img class="cg-slide" src="../img/pranay-1.jpg" alt="Participantes del taller del Fundo Pranay posan juntos y sonrientes alrededor de la mesa de trabajo" width="1203" height="757" loading="lazy"><img class="cg-slide" src="../img/pranay-2.jpg" alt="Representantes de las iniciativas apoyadas conversan en círculo en una sala de reuniones durante el taller" width="1600" height="1200" loading="lazy"><img class="cg-slide" src="../img/pranay-3.jpg" alt="Una facilitadora conduce una conversación frente a la proyección, con participantes sentados alrededor" width="1600" height="1200" loading="lazy"><img class="cg-slide" src="../img/pranay-4.jpg" alt="Presentación de una de las iniciativas apoyadas en la pantalla, con post-its esparcidos sobre la mesa" width="963" height="1216" style="object-position:50% 45%" loading="lazy"><img class="cg-slide" src="../img/pranay-5.jpg" alt="Sala del taller con participantes alrededor de la mesa siguiendo una presentación" width="963" height="1216" style="object-position:50% 45%" loading="lazy"><img class="cg-slide" src="../img/pranay-6.jpg" alt="Cartel con post-its de colores producido por una de las iniciativas durante la dinámica del taller" width="1600" height="1200" loading="lazy"></div><div class="cg-nav"><button type="button" class="cg-btn" data-dir="-1" aria-label="Foto anterior"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="cg-dots" aria-hidden="true"></div><button type="button" class="cg-btn" data-dir="1" aria-label="Foto siguiente"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M7.5 4.5 13 10l-5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div>
           <div class="case-top"><span>Inversión social privada</span><span>Educación</span></div>
           <div><h3>Fundo Pranay</h3><p class="case-title">Gestión de inversión social y acompañamiento de las iniciativas apoyadas</p></div>
-          <dl class="stats"><div class="stat"><dt>ticket promedio por iniciativa</dt><dd>~R$ 300 mil</dd></div><div class="stat stat-text"><dt>enfoque de las iniciativas apoyadas</dt><dd>Educación socioemocional</dd></div></dl>
+          <dl class="stats"><div class="stat"><dt>años de alianza</dt><dd>3</dd></div><div class="stat"><dt>ticket promedio por iniciativa</dt><dd>~R$ 300 mil</dd></div><div class="stat stat-text"><dt>enfoque de las iniciativas apoyadas</dt><dd>Educación socioemocional</dd></div></dl>
           <div class="case-body"><p>EmPacto fue responsable de la gestión de la inversión social del fondo y del acompañamiento de las iniciativas apoyadas, todas vinculadas a la educación socioemocional.</p><ul class="case-list"><li>Acompañamiento cercano de cada iniciativa apoyada</li><li>Desarrollo de las Teorías del Cambio de cada iniciativa</li><li>Creación de instrumentos de Medición y Evaluación de Impacto</li><li>Talleres y facilitación de encuentros con las iniciativas</li><li>Gestión de la red de iniciativas apoyadas por el Fundo Pranay</li></ul></div>
           <div class="tags"><span class="tag">Gestión de Inversión Social</span><span class="tag">Teoría del Cambio</span><span class="tag">Medición y Evaluación</span><span class="tag">Talleres y facilitación</span><span class="tag">Gestión de redes</span></div>
         </article>
         <article class="case reveal" id="case-arredondar" style="--rd:0.32s">
-          <div class="case-logo"><img src="../img/logos/arredondar.png" alt="Instituto Arredondar" width="400" height="400" loading="lazy"></div>
-          <div><h3>Instituto Arredondar</h3><p class="case-title">Validación y monitoreo de organizaciones sociales</p></div>
-          <dl class="stats"><div class="stat"><dt>donados en programas con el comercio minorista</dt><dd>R$ 11 mill.</dd></div><div class="stat"><dt>ONG apoyadas</dt><dd>75</dd></div></dl>
-          <div class="case-body"><p>Validación de organizaciones sociales según una metodología predefinida, con monitoreo de las organizaciones apoyadas, en programas de donación con marcas del comercio minorista que sumaron R$ 11 millones para 75 ONG.</p><ul class="case-list"><li>Validación de organizaciones con metodología predefinida</li><li>Monitoreo de las organizaciones apoyadas</li><li>Gestión de inversión social</li><li>Involucramiento corporativo en alianza con marcas como Grupo Pão de Açúcar, ZAMP, Petz y St Marche</li></ul></div>
-          <div class="tags"><span class="tag">Validación de organizaciones</span><span class="tag">Investigación y evaluación</span><span class="tag">Gestión de Inversión Social</span><span class="tag">Involucramiento corporativo</span></div>
+          <div class="case-gallery" data-gallery aria-roledescription="carrusel" aria-label="Fotos: Instituto Arredondar"><div class="cg-track" tabindex="0"><img class="cg-slide" src="../img/arredondar-1.jpg" alt="Equipo y jóvenes de un centro de capacitación profesional posan juntos con camisetas de la campaña Cola Bora, en una de las organizaciones apoyadas por Arredondar" width="1560" height="1040" loading="lazy"><img class="cg-slide" src="../img/arredondar-2.jpg" alt="Equipo reunido alrededor de una mesa cubierta de pósits de colores durante un taller de trabajo" width="1600" height="1200" loading="lazy"><img class="cg-slide" src="../img/arredondar-3.jpg" alt="Integrante del equipo habla sentada en un escenario durante un panel, con la proyección de un evento al fondo" width="1600" height="1067" style="object-position:50% 35%" loading="lazy"></div><div class="cg-nav"><button type="button" class="cg-btn" data-dir="-1" aria-label="Foto anterior"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="cg-dots" aria-hidden="true"></div><button type="button" class="cg-btn" data-dir="1" aria-label="Foto siguiente"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M7.5 4.5 13 10l-5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div>
+          <div class="case-top"><span>Gestión de inversión social · Investigación y evaluación</span><span>2019–2025 y 2026</span></div>
+          <div><h3>Instituto Arredondar</h3><p class="case-title">Gestión de inversión social y validación de organizaciones</p></div>
+          <dl class="stats"><div class="stat"><dt>años de actuación</dt><dd>6</dd></div><div class="stat"><dt>donados por Arredondar en alianza con el comercio minorista durante ese período</dt><dd>R$ 11 mill.</dd></div><div class="stat"><dt>ONG monitoreadas y apoyadas</dt><dd>75</dd></div></dl>
+          <div class="case-body"><p>Gestión de la inversión social del instituto a lo largo de seis años, con monitoreo de las organizaciones apoyadas e involucramiento de marcas aliadas del comercio minorista, como Grupo Pão de Açúcar, ZAMP, Petz y St Marche. En 2026, conducción de la validación de organizaciones sociales de acuerdo con la metodología del Instituto.</p><ul class="case-list"><li>Gestión de inversión social y relación con las ONG apoyadas</li><li>Seguimiento y monitoreo de las organizaciones</li><li>Involucramiento corporativo con marcas aliadas</li><li>Apoyo comercial a organizaciones interesadas en captar fondos mediante redondeo</li></ul></div>
+          <div class="tags"><span class="tag">Involucramiento corporativo</span><span class="tag">Validación de organizaciones</span></div>
         </article>
         <article class="case is-dark reveal" id="case-workshops" style="--rd:0.40s">
           <div class="case-logo case-logos" aria-label="Organizaciones atendidas">
@@ -3711,7 +3816,7 @@ window.empactoSubmit = async (form, button, note, fields, subject) => {
 <a class="wa-float" href="https://wa.me/5511992124664?text=%C2%A1Hola%2C%20EmPacto%21%20Llegu%C3%A9%20por%20el%20sitio%20web%20y%20me%20gustar%C3%ADa%20conversar." target="_blank" rel="noopener" aria-label="Conversar por WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.5 19.5l1.1-3.6A7.8 7.8 0 1 1 8.4 18.6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 10.2c.3 1.6 1.9 3.3 3.6 3.8l1-.9 1.6.7-.3 1.3c-2.9.3-6.2-2.9-6-5.9l1.3-.3.7 1.6z" fill="currentColor"/></svg><span>¿Conversamos?</span></a>
 <a class="btn btn-clay float-cta" href="#diagnostic" data-float inert>Por dónde empezar<svg class="i" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 10h11.5M10.5 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
 
-<script type="application/json" id="diag-data">{"email":"oi@empacto.social","weights":{"q1":{"abrir-ong":{"estrategia":3,"diagnostico":1,"teoria":3,"recursos":3,"avaliacao":3,"projetos":3,"workshops":2,"mentoria":2},"iniciar":{"estrategia":3,"diagnostico":1,"teoria":3,"projetos":3,"conteudo":2,"mentoria":2},"gerir":{"estrategia":2,"diagnostico":4,"recursos":1,"avaliacao":2,"projetos":1,"investimento":2,"workshops":1,"conteudo":1,"mentoria":3},"voluntariado":{"estrategia":2,"diagnostico":2,"investimento":3,"sustentabilidade":1,"workshops":4,"conteudo":1,"mentoria":1},"doacoes":{"estrategia":1,"teoria":2,"recursos":3,"investimento":4},"empreender":{"estrategia":3,"diagnostico":1,"teoria":2,"avaliacao":3,"projetos":2,"investimento":1,"bcorp":1,"workshops":2,"conteudo":2,"mentoria":3},"aprender-social":{"workshops":2,"conteudo":3,"mentoria":1,"curso":5},"aprender-negocios":{"estrategia":1,"bcorp":1,"workshops":2,"conteudo":2,"mentoria":2,"curso":5},"apoiar":{"diagnostico":1,"teoria":1,"recursos":1,"investimento":4,"workshops":2,"mentoria":2}},"q2":{"ong":{"estrategia":3,"diagnostico":2,"teoria":2,"recursos":2,"avaliacao":2,"projetos":1},"empresa":{"estrategia":2,"diagnostico":2,"investimento":1,"sustentabilidade":2,"bcorp":2,"workshops":2,"curso":1},"doador":{"estrategia":2,"diagnostico":2,"teoria":2,"avaliacao":2,"projetos":2,"investimento":3,"curso":1},"negocio":{"estrategia":2,"teoria":2,"recursos":1,"projetos":2,"sustentabilidade":1,"bcorp":2,"mentoria":2,"curso":1},"pessoa":{"estrategia":2,"diagnostico":2,"teoria":2,"recursos":1,"projetos":3,"mentoria":3,"curso":2}},"q3":{"ideia":{"estrategia":2,"diagnostico":2,"teoria":3,"avaliacao":3,"projetos":3,"mentoria":2},"estruturar":{"estrategia":3,"diagnostico":3,"avaliacao":1,"projetos":1},"crescer":{"estrategia":2,"diagnostico":2,"recursos":3,"projetos":1,"conteudo":1,"mentoria":2},"maduro":{"estrategia":2,"diagnostico":2,"avaliacao":3,"conteudo":2}},"q4":{"clareza":{"estrategia":4,"diagnostico":3,"teoria":4,"projetos":1,"mentoria":2},"recursos":{"estrategia":2,"recursos":4,"conteudo":1},"medir":{"diagnostico":2,"teoria":2,"avaliacao":4,"conteudo":1},"engajar":{"workshops":4,"conteudo":2,"mentoria":2,"curso":1},"ambiental":{"sustentabilidade":4,"bcorp":4}}},"priority":["estrategia","diagnostico","teoria","recursos","avaliacao","projetos","investimento","sustentabilidade","bcorp","workshops","conteudo","mentoria","curso"],"caseFor":{"estrategia":"anavilhanas","investimento":"pranay","projetos":"formalizacao","recursos":"amigos","sustentabilidade":"anavilhanas","bcorp":"anavilhanas","avaliacao":"arredondar","conteudo":"conteudo-ref","workshops":"workshops","diagnostico":"anavilhanas","teoria":"pranay","mentoria":"pranay","curso":"loccitane"},"services":{"estrategia":"Planificación estratégica","investimento":"Gestión de inversión social","projetos":"Desarrollo de proyectos y organizaciones","recursos":"Movilización de recursos","sustentabilidade":"Estrategias de sostenibilidad","bcorp":"Certificación B Corp","avaliacao":"Investigación y evaluación","conteudo":"Contenido y cursos","workshops":"Talleres y facilitación","diagnostico":"Diagnóstico de la iniciativa","teoria":"Teoría del Cambio","mentoria":"Mentoría con el equipo","curso":"Curso personalizado"},"why":{"estrategia":"Antes de acelerar, vale la pena alinear propósito, prioridades y modelo de sostenibilidad financiera.","investimento":"Un portafolio bien diseñado genera un impacto consistente y es más fácil de acompañar.","projetos":"Transformar la idea en proyecto: con alcance, presupuesto y cronograma.","recursos":"Una estrategia de recaudación diversificada da aire para empezar y crecer con seguridad.","sustentabilidade":"Residuos, compostaje y cadena de materiales son puntos de partida concretos para reducir el impacto ambiental.","bcorp":"El diagnóstico B Corp muestra dónde estás y organiza un plan realista hasta la certificación.","avaliacao":"Medir bien es lo que permite aprender, rendir cuentas y contar tu historia con credibilidad.","conteudo":"Profundizar en temas técnicos y nuevas herramientas puede ser un camino para fortalecer el impacto que queremos generar","workshops":"Experiencias como talleres, inmersiones y voluntariado crean un compromiso que perdura.","diagnostico":"Una mirada externa y estructurada muestra lo que ya funciona, dónde están los cuellos de botella y qué pasos traen más resultados ahora.","teoria":"Tener claridad sobre qué cambio se quiere generar, para quién y por qué camino es la base para la toma de decisiones.","mentoria":"Conversaciones estructuradas con quienes ya vivieron los desafíos en la práctica ayudan a decidir mejor y a no caminar solo.","curso":"Un curso diseñado para tu contexto y tu ritmo, con contenido práctico del sector social y de los negocios de impacto."},"labels":{"q1":{"abrir-ong":"Quiero fundar una ONG","iniciar":"Quiero iniciar un proyecto de impacto","gerir":"Quiero gestionar un proyecto de impacto","voluntariado":"Quiero armar un plan de voluntariado","doacoes":"Quiero organizar donaciones para una causa","empreender":"Quiero emprender socialmente","aprender-social":"Quiero aprender más sobre el sector social","aprender-negocios":"Quiero aprender más sobre negocios sociales","apoiar":"Quiero apoyar una causa"},"q2":{"ong":"Organización social o instituto","empresa":"Empresa","doador":"Fundación o familia donante","negocio":"Negocio de impacto","pessoa":"Persona física"},"q3":{"ideia":"Idea o inicio","estruturar":"En operación","crescer":"En crecimiento","maduro":"Consolidada"},"q4":{"clareza":"Claridad estratégica","recursos":"Captar recursos","medir":"Medir el impacto","engajar":"Involucrar a las personas","ambiental":"Sostenibilidad y certificación"}},"cases":{"loccitane":{"client":"Grupo L'Occitane","title":"Programa de voluntariado","line":"503 voluntarios · 23 actividades · 19 organizaciones apoyadas"},"anavilhanas":{"client":"Anavilhanas Jungle Lodge","title":"Sostenibilidad en la Amazonía","line":"Certificación B Corp · Actuación sistémica en sostenibilidad e inversión social"},"amigos":{"client":"Fundo dos Amigos","title":"Respuesta a la COVID-19","line":"R$ 82 mil en un mes · 59 organizaciones apoyadas · 7 estados"},"pranay":{"client":"Fundo Pranay","title":"Gestión de inversión social","line":"~R$ 300 mil por iniciativa · Teorías del Cambio y evaluación de impacto"},"arredondar":{"client":"Instituto Arredondar","title":"Validación y monitoreo de organizaciones","line":"R$ 11 millones donados a 75 ONG · alianzas con GPA, ZAMP, Petz y St Marche"},"workshops":{"client":"ACNUR, Instituto Sol, Morada Comum y Resex Delta do Parnaíba","title":"Talleres e inmersiones","line":"Encuentros a la medida para equipos, emprendedores y comunidades"},"formalizacao":{"client":"Formalización de organizaciones","title":"De la idea a la asociación constituida","line":"Bela Rua, IGA, Instituto Veredas, PAN, juntos.com.vc y otras"},"conteudo-ref":{"client":"Cursos de movilización de recursos, Negocios Sociales y Herramientas de Impacto","title":"","line":""}},"ui":{"step":"Pregunta {n} de 4","next":"Siguiente","see":"Ver recomendación","restart":"Volver a empezar","mailSubject":"Diagnóstico EmPacto — {service}","mailBody":"¡Hola, EmPacto!\n\nHice el diagnóstico en el sitio:\n• Objetivo: {q1}\n• Perfil: {q2}\n• Momento: {q3}\n• Desafío: {q4}\n\nRecomendación: {service}.\n\nMe gustaría conversar sobre esto.","eyebrow":"Nuestra recomendación","title":"Empieza por {service}.","for":"Para:","also":"También puede ayudar","case":"Un caso similar","cta":"Conversar sobre esto"},"titles":{"estrategia":"Empieza por <em>planificación estratégica<\/em>.","diagnostico":"Haz un <em>diagnóstico<\/em> de tu iniciativa.","teoria":"Empieza por una <em>teoría del cambio<\/em>.","recursos":"Empieza por <em>movilización de recursos<\/em>.","avaliacao":"Empieza por <em>investigación y evaluación<\/em>.","projetos":"Empieza por <em>desarrollo de proyectos y organizaciones<\/em>.","investimento":"Empieza por <em>gestión de inversión social<\/em>.","sustentabilidade":"Empieza por <em>estrategias de sostenibilidad<\/em>.","bcorp":"Empieza por <em>certificación B Corp<\/em>.","workshops":"Empieza por <em>talleres y facilitación<\/em>.","conteudo":"Empieza por <em>contenido y cursos<\/em>.","mentoria":"Haz una <em>mentoría<\/em> con el equipo.","curso":"Haz un <em>curso personalizado<\/em>."}}</script>
+<script type="application/json" id="diag-data">{"email":"oi@empacto.social","weights":{"q1":{"abrir-ong":{"estrategia":3,"diagnostico":1,"teoria":3,"recursos":3,"avaliacao":3,"projetos":3,"workshops":2,"mentoria":2},"iniciar":{"estrategia":3,"diagnostico":1,"teoria":3,"projetos":3,"conteudo":2,"mentoria":3},"gerir":{"estrategia":2,"diagnostico":4,"recursos":1,"avaliacao":2,"projetos":1,"investimento":2,"workshops":1,"conteudo":1,"mentoria":4},"voluntariado":{"estrategia":2,"diagnostico":2,"investimento":3,"sustentabilidade":1,"workshops":4,"conteudo":1,"mentoria":1},"doacoes":{"estrategia":1,"teoria":2,"recursos":3,"investimento":4},"empreender":{"estrategia":3,"diagnostico":1,"teoria":2,"avaliacao":3,"projetos":2,"investimento":1,"bcorp":1,"workshops":2,"conteudo":2,"mentoria":4},"aprender-social":{"workshops":2,"conteudo":3,"mentoria":1,"curso":5},"aprender-negocios":{"estrategia":1,"bcorp":1,"workshops":2,"conteudo":2,"mentoria":2,"curso":5},"apoiar":{"diagnostico":1,"teoria":1,"recursos":1,"investimento":4,"workshops":2,"mentoria":3}},"q2":{"ong":{"estrategia":3,"diagnostico":2,"teoria":2,"recursos":2,"avaliacao":2,"projetos":1},"empresa":{"estrategia":2,"diagnostico":2,"investimento":1,"sustentabilidade":2,"bcorp":2,"workshops":2,"curso":1},"doador":{"estrategia":2,"diagnostico":2,"teoria":2,"avaliacao":2,"projetos":2,"investimento":3,"curso":1},"negocio":{"estrategia":2,"teoria":2,"recursos":1,"projetos":2,"sustentabilidade":1,"bcorp":2,"mentoria":3,"curso":1},"pessoa":{"estrategia":2,"diagnostico":2,"teoria":2,"recursos":1,"projetos":3,"mentoria":4,"curso":2}},"q3":{"ideia":{"estrategia":2,"diagnostico":2,"teoria":3,"avaliacao":3,"projetos":3,"mentoria":3},"estruturar":{"estrategia":3,"diagnostico":3,"avaliacao":1,"projetos":1},"crescer":{"estrategia":2,"diagnostico":2,"recursos":3,"projetos":1,"conteudo":1,"mentoria":3},"maduro":{"estrategia":2,"diagnostico":2,"avaliacao":3,"conteudo":2}},"q4":{"clareza":{"estrategia":4,"diagnostico":3,"teoria":4,"projetos":1,"mentoria":2},"recursos":{"estrategia":2,"recursos":4,"conteudo":1},"medir":{"diagnostico":2,"teoria":2,"avaliacao":4,"conteudo":1},"engajar":{"workshops":4,"conteudo":2,"mentoria":3,"curso":1},"ambiental":{"sustentabilidade":4,"bcorp":4}}},"priority":["estrategia","diagnostico","teoria","recursos","avaliacao","projetos","investimento","sustentabilidade","bcorp","workshops","conteudo","mentoria","curso"],"caseFor":{"estrategia":"anavilhanas","investimento":"pranay","projetos":"formalizacao","recursos":"amigos","sustentabilidade":"anavilhanas","bcorp":"anavilhanas","avaliacao":"arredondar","conteudo":"conteudo-ref","workshops":"workshops","diagnostico":"anavilhanas","teoria":"pranay","mentoria":"pranay","curso":"loccitane"},"services":{"estrategia":"Planificación estratégica","investimento":"Gestión de inversión social","projetos":"Desarrollo de proyectos y organizaciones","recursos":"Movilización de recursos","sustentabilidade":"Estrategias de sostenibilidad","bcorp":"Certificación B Corp","avaliacao":"Investigación y evaluación","conteudo":"Contenido y cursos","workshops":"Talleres y facilitación","diagnostico":"Diagnóstico de la iniciativa","teoria":"Teoría del Cambio","mentoria":"Mentoría con el equipo","curso":"Curso personalizado"},"why":{"estrategia":"Antes de acelerar, vale la pena alinear propósito, prioridades y modelo de sostenibilidad financiera.","investimento":"Un portafolio bien diseñado genera un impacto consistente y es más fácil de acompañar.","projetos":"Transformar la idea en proyecto: con alcance, presupuesto y cronograma.","recursos":"Una estrategia de recaudación diversificada da aire para empezar y crecer con seguridad.","sustentabilidade":"Residuos, compostaje y cadena de materiales son puntos de partida concretos para reducir el impacto ambiental.","bcorp":"El diagnóstico B Corp muestra dónde estás y organiza un plan realista hasta la certificación.","avaliacao":"Medir bien es lo que permite aprender, rendir cuentas y contar tu historia con credibilidad.","conteudo":"Profundizar en temas técnicos y nuevas herramientas puede ser un camino para fortalecer el impacto que queremos generar","workshops":"Experiencias como talleres, inmersiones y voluntariado crean un compromiso que perdura.","diagnostico":"Una mirada externa y estructurada muestra lo que ya funciona, dónde están los cuellos de botella y qué pasos traen más resultados ahora.","teoria":"Tener claridad sobre qué cambio se quiere generar, para quién y por qué camino es la base para la toma de decisiones.","mentoria":"Conversaciones estructuradas con quienes ya vivieron los desafíos en la práctica ayudan a decidir mejor y a no caminar solo.","curso":"Un curso diseñado para tu contexto y tu ritmo, con contenido práctico del sector social y de los negocios de impacto."},"labels":{"q1":{"abrir-ong":"Quiero fundar una ONG","iniciar":"Quiero iniciar un proyecto de impacto","gerir":"Quiero gestionar un proyecto de impacto","voluntariado":"Quiero armar un plan de voluntariado","doacoes":"Quiero organizar donaciones para una causa","empreender":"Quiero emprender socialmente","aprender-social":"Quiero aprender más sobre el sector social","aprender-negocios":"Quiero aprender más sobre negocios sociales","apoiar":"Quiero apoyar una causa"},"q2":{"ong":"Organización social o instituto","empresa":"Empresa","doador":"Fundación o familia donante","negocio":"Negocio de impacto","pessoa":"Persona física"},"q3":{"ideia":"Idea o inicio","estruturar":"En operación","crescer":"En crecimiento","maduro":"Consolidada"},"q4":{"clareza":"Claridad estratégica","recursos":"Captar recursos","medir":"Medir el impacto","engajar":"Involucrar a las personas","ambiental":"Sostenibilidad y certificación"}},"cases":{"loccitane":{"client":"Grupo L'Occitane","title":"Programa de voluntariado","line":"503 voluntarios · 23 actividades · 19 organizaciones apoyadas"},"anavilhanas":{"client":"Anavilhanas Jungle Lodge","title":"Sostenibilidad en la Amazonía","line":"Certificación B Corp · Actuación sistémica en sostenibilidad e inversión social"},"amigos":{"client":"Fundo dos Amigos","title":"Respuesta a la COVID-19","line":"R$ 82 mil en un mes · 59 organizaciones apoyadas · 7 estados"},"pranay":{"client":"Fundo Pranay","title":"Gestión de inversión social","line":"~R$ 300 mil por iniciativa · Teorías del Cambio y evaluación de impacto"},"arredondar":{"client":"Instituto Arredondar","title":"Gestión de inversión social y validación de organizaciones","line":"R$ 11 millones donados en alianza con el comercio minorista · 75 ONG monitoreadas y apoyadas"},"workshops":{"client":"ACNUR, Instituto Sol, Morada Comum y Resex Delta do Parnaíba","title":"Talleres e inmersiones","line":"Encuentros a la medida para equipos, emprendedores y comunidades"},"formalizacao":{"client":"Formalización de organizaciones","title":"De la idea a la asociación constituida","line":"Bela Rua, IGA, Instituto Veredas, PAN, juntos.com.vc y otras"},"conteudo-ref":{"client":"Cursos de movilización de recursos, Negocios Sociales y Herramientas de Impacto","title":"","line":""}},"ui":{"step":"Pregunta {n} de 4","next":"Siguiente","see":"Ver recomendación","restart":"Volver a empezar","mailSubject":"Diagnóstico EmPacto — {service}","mailBody":"¡Hola, EmPacto!\n\nHice el diagnóstico en el sitio:\n• Objetivo: {q1}\n• Perfil: {q2}\n• Momento: {q3}\n• Desafío: {q4}\n\nRecomendación: {service}.\n\nMe gustaría conversar sobre esto.","eyebrow":"Nuestra recomendación","title":"Empieza por {service}.","for":"Para:","also":"También puede ayudar","case":"Un caso similar","cta":"Conversar sobre esto"},"titles":{"estrategia":"Empieza por <em>planificación estratégica<\/em>.","diagnostico":"Haz un <em>diagnóstico<\/em> de tu iniciativa.","teoria":"Empieza por una <em>teoría del cambio<\/em>.","recursos":"Empieza por <em>movilización de recursos<\/em>.","avaliacao":"Empieza por <em>investigación y evaluación<\/em>.","projetos":"Empieza por <em>desarrollo de proyectos y organizaciones<\/em>.","investimento":"Empieza por <em>gestión de inversión social<\/em>.","sustentabilidade":"Empieza por <em>estrategias de sostenibilidad<\/em>.","bcorp":"Empieza por <em>certificación B Corp<\/em>.","workshops":"Empieza por <em>talleres y facilitación<\/em>.","conteudo":"Empieza por <em>contenido y cursos<\/em>.","mentoria":"Haz una <em>mentoría<\/em> con el equipo.","curso":"Haz un <em>curso personalizado<\/em>."}}</script>
 <script>
 (() => {
   const root = document.documentElement;
@@ -4106,7 +4211,7 @@ window.empactoSubmit = async (form, button, note, fields, subject) => {
         telefone: f.telefone.value.trim(),
         mensagem: f.mensagem.value.trim(),
         origem: 'Formulario de contacto',
-      }, 'Contacto desde el sitio de EmPacto — ' + nome);
+      }, 'Mensagem pelo site — ' + nome);
     });
   }
 
@@ -4193,6 +4298,7 @@ window.empactoSubmit = async (form, button, note, fields, subject) => {
     const [top, second, ...rest] = ranked;
     const paths = [top, second].filter(Boolean);
     const also = rest.slice(0, 2);
+    const svcOrder = [...paths, ...data.priority.filter((id) => !paths.includes(id) && data.services[id])];
     const labels = answers.map((a, k) => (Array.isArray(a) ? a : [a]).map((v) => data.labels[`q${k + 1}`][v]).join(', '));
     const service = paths.map((id) => data.services[id]).join(' + ');
     const fill = (s) =>
@@ -4200,6 +4306,7 @@ window.empactoSubmit = async (form, button, note, fields, subject) => {
     const code = 'EP-' + new Date().toISOString().slice(2, 10).replace(/-/g, '') + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
     lastDiag = {
       code,
+      data: { codigo: code, caminhos: paths.map((id) => ({ titulo: data.services[id], porque: data.why[id] })), respostas: [['Objetivo', labels[0]], ['Perfil', labels[1]], ['Momento', labels[2]], ['Desafio', labels[3]]] },
       subject: fill(ui.mailSubject),
       summary: [
         `Diagnóstico ${code}`,
@@ -4227,6 +4334,10 @@ window.empactoSubmit = async (form, button, note, fields, subject) => {
           <h4>Próximo paso</h4>
           <p class="rf-title">Escríbenos y sigamos juntos.</p>
           <p class="rf-intro">Cuéntanos un poco sobre tu contexto. Tus respuestas se envían junto con el mensaje, y nuestro equipo te contactará para continuar la conversación a partir de ellas.</p>
+          <fieldset class="rf-services"><legend>Servicios de interés</legend>
+            <p class="rf-hint">Los dos caminos sugeridos ya vienen marcados. Marca también otros servicios que te interesen.</p>
+            <div class="rf-chips">${svcOrder.map((id) => `<label class="rf-chip"><input type="checkbox" name="servicos" value="${id}"${paths.includes(id) ? ' checked' : ''}><span class="box" aria-hidden="true"></span><span>${esc(data.services[id])}</span>${paths.includes(id) ? '<small>sugerido</small>' : ''}</label>`).join('')}</div>
+          </fieldset>
           <div class="cf-row">
             <label class="cf-field"><span>Nombre</span><input name="nome" type="text" autocomplete="name" required></label>
             <label class="cf-field"><span>Correo electrónico</span><input name="email" type="email" autocomplete="email" required></label>
@@ -4298,9 +4409,9 @@ window.empactoSubmit = async (form, button, note, fields, subject) => {
       nome,
       email: f.email.value.trim(),
       mensagem: f.mensagem.value.trim(),
-      diagnostico: lastDiag ? lastDiag.summary : '',
+      diag: lastDiag ? Object.assign({}, lastDiag.data, { servicos: [...rf.querySelectorAll('input[name=servicos]:checked')].map((i) => data.services[i.value]) }) : null,
       origem: 'Por dónde empezar',
-    }, (lastDiag ? lastDiag.subject : 'Por dónde empezar') + ' — ' + nome);
+    }, 'Diagnóstico pelo site — ' + nome);
   });
   result.addEventListener('click', (e) => {
     if (!e.target.closest('[data-restart]')) return;
