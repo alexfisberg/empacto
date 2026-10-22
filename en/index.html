@@ -3,8 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>EmPacto — Positive impact is built EmPacto</title>
-<meta name="description" content="Social impact consulting: we support individuals, social organizations, companies, foundations and donor families in creating and strengthening consistent initiatives.">
+<title>EmPacto | Social impact consulting in Brazil for foundations and companies</title>
+<meta name="description" content="Social impact consulting in Brazil for foundations, corporate institutes and companies: social investment management, corporate volunteering, impact evaluation, theory of change and fundraising.">
+<link rel="canonical" href="https://empacto.social/en/">
+<link rel="alternate" hreflang="pt-BR" href="https://empacto.social/">
+<link rel="alternate" hreflang="en" href="https://empacto.social/en/">
+<link rel="alternate" hreflang="es" href="https://empacto.social/es/">
+<link rel="alternate" hreflang="x-default" href="https://empacto.social/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#22311f">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EmPacto">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://empacto.social/en/">
+<meta property="og:title" content="EmPacto — Social impact consulting in Brazil">
+<meta property="og:description" content="Social impact consulting in Brazil for foundations, corporate institutes and companies: social investment management, corporate volunteering, impact evaluation, theory of change and fundraising.">
+<meta property="og:image" content="https://empacto.social/img/og-empacto.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="EmPacto — social impact consulting">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="EmPacto — Social impact consulting in Brazil">
+<meta name="twitter:description" content="Social impact consulting in Brazil for foundations, corporate institutes and companies: social investment management, corporate volunteering, impact evaluation, theory of change and fundraising.">
+<meta name="twitter:image" content="https://empacto.social/img/og-empacto.jpg">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "ProfessionalService", "@id": "https://empacto.social/#org", "name": "EmPacto", "url": "https://empacto.social/en/", "logo": "https://empacto.social/apple-touch-icon.png", "image": "https://empacto.social/img/og-empacto.jpg", "description": "Social impact consulting in Brazil for foundations, corporate institutes and companies: social investment management, corporate volunteering, impact evaluation, theory of change and fundraising.", "email": "oi@empacto.social", "telephone": "+55-11-99212-4664", "address": {"@type": "PostalAddress", "addressLocality": "São Paulo", "addressRegion": "SP", "addressCountry": "BR"}, "areaServed": [{"@type": "Country", "name": "Brasil"}, "Latin America"], "founder": [{"@type": "Person", "name": "Manuela Beserra"}, {"@type": "Person", "name": "Alex Fisberg", "url": "https://www.alexfisberg.com"}], "knowsAbout": ["Strategic planning", "Social investment management", "Corporate volunteering", "Impact research and evaluation", "Theory of Change", "Fundraising", "B Corp Certification", "Workshops and facilitation", "Mentoring"], "hasOfferCatalog": {"@type": "OfferCatalog", "name": "Serviços", "itemListElement": [{"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Strategic planning"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Social investment management"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Corporate volunteering"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Impact research and evaluation"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Theory of Change"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Fundraising"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "B Corp Certification"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Workshops and facilitation"}}, {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Mentoring"}}]}, "inLanguage": "en"}</script>
 <style>:root{box-sizing:border-box}*,*::before,*::after{box-sizing:inherit}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -3389,6 +3413,19 @@ body { font-synthesis-weight: none; }
    Serviço padrão: FormSubmit (gratuito, sem cadastro). Na primeira mensagem, o FormSubmit
    manda um e-mail de ativação para oi@empacto.social; basta clicar em "Activate".
    Para usar o Formspree, troque o endpoint por https://formspree.io/f/SEU_ID. */
+/* Medição de divulgação (opcional): preencha os IDs para ativar. Vazios, nada é carregado. */
+window.EMPACTO_TRACK = { ga4: '', metaPixel: '', linkedinPartnerId: '' };
+(() => {
+  const t = window.EMPACTO_TRACK, add = (src) => { const s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s); };
+  if (t.ga4) { add('https://www.googletagmanager.com/gtag/js?id=' + t.ga4); window.dataLayer = window.dataLayer || []; window.gtag = function () { dataLayer.push(arguments); }; gtag('js', new Date()); gtag('config', t.ga4); }
+  if (t.metaPixel) { const f = window.fbq = function () { f.callMethod ? f.callMethod.apply(f, arguments) : f.queue.push(arguments); }; f.push = f; f.loaded = true; f.version = '2.0'; f.queue = []; add('https://connect.facebook.net/en_US/fbevents.js'); fbq('init', t.metaPixel); fbq('track', 'PageView'); }
+  if (t.linkedinPartnerId) { window._linkedin_data_partner_ids = [t.linkedinPartnerId]; window.lintrk = window.lintrk || function (a, b) { (window.lintrk.q = window.lintrk.q || []).push([a, b]); }; add('https://snap.licdn.com/li.lms-analytics/insight.min.js'); }
+  // Conversão: chamada quando uma mensagem é enviada com sucesso (contato ou diagnóstico).
+  window.empactoTrackLead = (origem) => {
+    try { if (window.gtag) gtag('event', 'generate_lead', { origem }); } catch (e) {}
+    try { if (window.fbq) fbq('track', 'Lead', { content_name: origem }); } catch (e) {}
+  };
+})();
 window.EMPACTO_FORM = {
   // Provisório: enquanto oi@empacto.social não existe, as mensagens vão para Alex, com cópia para Manuela.
   // Quando o e-mail oficial existir, troque o endpoint para .../ajax/oi@empacto.social e apague o cc.
@@ -3510,6 +3547,7 @@ window.empactoSubmit = async (form, button, note, fields, subject) => {
   note.classList.remove('is-error', 'is-ok');
   try {
     await window.empactoSend(fields, subject);
+    if (window.empactoTrackLead) window.empactoTrackLead(fields.origem);
     note.textContent = 'Message sent! Thank you, we’ll reply soon.';
     note.classList.add('is-ok');
     form.querySelectorAll('input:not([type=hidden]), textarea').forEach((el) => { el.value = ''; el.removeAttribute('aria-invalid'); });
